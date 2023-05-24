@@ -3,7 +3,7 @@
 !constant "userId" "mainUser"
 !constant "userRole" "Main"
 !constant "userTitle" "${userRole} User"
-!include "${sharedDslPath}/role.dsl"
+!include "${sharedDslPath}/user-role.dsl"
 !ref "Person://${userTitle}" {
   description "The main reason the system exists."
 }
