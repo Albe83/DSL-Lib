@@ -7,9 +7,9 @@ workspace "User Role" "A basic workspace with an Generic User Role" {
     !constant "userRole" "Generic"
     !constant "userTitle" "${userRole} User"
     
-    !constant "roleMainColor" "grey"
-    !constant "roleDarkenMainColor" "darkgrey"
-    !constant "roleOffColor" "white"
+    !constant "userRoleMainColor" "grey"
+    !constant "userRoleDarkenMainColor" "darkgrey"
+    !constant "userRoleOffColor" "white"
     
     model {
       !include "${sharedDslPath}/user-role.dsl"
