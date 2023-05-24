@@ -3,7 +3,7 @@
 !constant "userId" "techUser"
 !constant "userRole" "Tech"
 !constant "userTitle" "Technical User"
-!include "${sharedDslPath}/user-role.dsl"
+!include "${sharedDslPath}/custom-user-role.dsl"
 !ref "Person://${userTitle}" {
   description "Performs maintenance activities on the system."
 }
