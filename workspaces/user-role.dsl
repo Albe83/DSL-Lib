@@ -1,4 +1,7 @@
-workspace "User Role" "A basic workspace with an Generic User Role" {
+workspace {
+    name "User Role"
+    description "A basic workspace with an Generic User Role"
+    
     !identifiers hierarchical
     
     !constant "sharedDslPath" "https://raw.githubusercontent.com/Albe83/DSL-Lib/main/fragments"
