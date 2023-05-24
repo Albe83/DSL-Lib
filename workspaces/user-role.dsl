@@ -15,8 +15,8 @@ workspace "User Role" "A basic workspace with an Generic User Role" {
       !include "${sharedDslPath}/user-role.dsl"
     }
     
-    view {
-      style {
+    views {
+      styles {
         !include "${sharedDslPath}/styles/user-role.dsl"
       }
     }
