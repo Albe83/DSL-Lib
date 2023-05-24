@@ -6,4 +6,8 @@
 !include "${sharedDslPath}/user-role.dsl"
 !ref "Person://${userTitle}" {
   description "Performs maintenance activities on the system."
+  
+  !constant "styleUserRoleTechUserBackground" "#083475"
+  !constant "styleUserRoleTechUserColor" "#ffffff"
+  !constant "styleUserRoleTechUserStroke" "#1168bd"
 }
