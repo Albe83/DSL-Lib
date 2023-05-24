@@ -3,9 +3,8 @@ workspace "User Role" "A basic workspace with an Generic User Role" {
     
     !constant "sharedDslPath" "https://raw.githubusercontent.com/Albe83/DSL-Lib/main/fragments"
     
-    !constant "userId" "mainUser"
-    !constant "userId" "mainUser"
-    !constant "userRole" "Main"
+    !constant "userId" "genericUser"
+    !constant "userRole" "Generic"
     !constant "userTitle" "${userRole} User"
     
     !constant "roleMainColor" "grey"
