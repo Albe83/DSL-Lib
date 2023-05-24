@@ -1,8 +1,6 @@
 element "UserRole: ${userRole}" {
   shape "Person"                
-  background "${userRoleMainColor}"
-  color "${userRoleOffColor}"
-  stroke "${userRoleDarkenMainColor}"
+  background "${${userId}StyleMainColor}"
+  color "${${userId}StyleOffColor}"
+  stroke "${${userId}StyleDarkenMainColor}"
 }
-            
-            
