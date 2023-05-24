@@ -10,6 +10,8 @@ Usage:
 !ref "Person://${userTitle}" {
   description "The main reason the system exists."
 }
+
+mailSystem -> mainUser "Send notifications"
 */
 
 ${userId} = person "${userTitle}" {
