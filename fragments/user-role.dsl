@@ -21,4 +21,8 @@ ${userId} = person "${userTitle}" {
   tags "UserRole: ${userRole}"
   
   description "Please, provide a description of this user."
+  
+  !constant "${userId}StyleMainColor" "grey"
+  !constant "${userId}StyleDarkenMainColor" "darkgrey"
+  !constant "${userId}StyleOffColor" "white"
 }
