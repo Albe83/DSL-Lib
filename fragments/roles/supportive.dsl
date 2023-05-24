@@ -3,7 +3,7 @@
 !constant "userId" "supportiveUser"
 !constant "userRole" "Supportive"
 !constant "userTitle" "${userRole} User"
-!include "${sharedDslPath}/role.dsl"
+!include "${sharedDslPath}/user-role.dsl"
 !ref "Person://${userTitle}" {
   description "Use the system to perform activities complementary to those of the primary users."
 }
