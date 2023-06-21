@@ -115,6 +115,105 @@ workspace {
                 }
             }
         }
+
+
+        deploymentEnvironment "Single Region" {
+            deploymentNode "Clients" {
+                containerInstance client.commandAdapter
+                containerInstance client.fastAdapter
+                containerInstance client.archiveAdapter
+            }
+
+            deploymentNode "Region" {
+                deploymentNode "Exection Platform" {
+                    containerInstance commandService.controller
+
+                    containerInstance fastService.changesController
+                    containerInstance fastService.evictionController
+                    containerInstance fastService.queryController
+
+                    containerInstance archiveService.changesController
+                    containerInstance archiveService.changesController
+                    containerInstance archiveService.queryController 
+                }
+
+                deploymentNode "Message Platform" {
+                    containerInstance commandService.broker
+                }
+                
+                deploymentNode "RDBMS Platform" {
+                    containerInstance archiveService.dataRepository
+                }
+
+                deploymentNode "K/V Platform" {
+                    containerInstance fastService.dataRepository
+                }
+            }
+        }
+
+        deploymentEnvironment "Multiple Regions" {
+            global = deploymentGroup "All Regions"
+            region1 = deploymentGroup "Region 1"
+            region2 = deploymentGroup "Region 2"
+
+            deploymentNode "Clients" {
+                containerInstance client.commandAdapter region1,region2
+                containerInstance client.fastAdapter region1,region2
+                containerInstance client.archiveAdapter region1,region2
+            }
+
+            deploymentNode "Region 1" {
+                deploymentNode "Exection Platform" {
+                    containerInstance commandService.controller region1
+
+                    containerInstance fastService.changesController region1,global
+                    containerInstance fastService.evictionController region1
+                    containerInstance fastService.queryController region1
+
+                    containerInstance archiveService.changesController region1,global
+                    containerInstance archiveService.changesController region1
+                    containerInstance archiveService.queryController region1
+                }
+
+                deploymentNode "Message Platform" {
+                    containerInstance commandService.broker region1,global
+                }
+                
+                deploymentNode "RDBMS Platform" {
+                    containerInstance archiveService.dataRepository region1
+                }
+
+                deploymentNode "K/V Platform" {
+                    containerInstance fastService.dataRepository region1
+                }
+            }
+
+            deploymentNode "Region 2" {
+                deploymentNode "Exection Platform" {
+                    containerInstance commandService.controller region2
+
+                    containerInstance fastService.changesController region2,global
+                    containerInstance fastService.evictionController region2
+                    containerInstance fastService.queryController region2
+
+                    containerInstance archiveService.changesController region2,global
+                    containerInstance archiveService.changesController region2
+                    containerInstance archiveService.queryController region2
+                }
+
+                deploymentNode "Message Platform" {
+                    containerInstance commandService.broker region2,global
+                }
+                
+                deploymentNode "RDBMS Platform" {
+                    containerInstance archiveService.dataRepository region2
+                }
+
+                deploymentNode "K/V Platform" {
+                    containerInstance fastService.dataRepository region2
+                }
+            }
+        }
     }
 
     views {
@@ -173,6 +272,22 @@ workspace {
 
             autoLayout tb
             include ->element.parent==archiveService->
+        }
+
+        deployment * "Single Region" "deploy-001" {
+            title "Single Region"
+            description "How deploy on a single region. Deployment for no-production or low budget environments."
+
+            autoLayout tb
+            include *
+        }
+
+        deployment * "Multiple Regions" "deploy-002" {
+            title "Multiple Regions"
+            description "How deploy on two or more regions. Deployment for production with high performance and resilience requirements."
+            
+            autoLayout tb
+            include *
         }
     }
 }
