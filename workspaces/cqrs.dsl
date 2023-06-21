@@ -258,60 +258,126 @@ workspace {
             region2 = deploymentGroup "Region 2"
 
             deploymentNode "Clients" {
+                instances "1..N"
+
                 containerInstance client.commandAdapter region1,region2
                 containerInstance client.fastAdapter region1,region2
                 containerInstance client.archiveAdapter region1,region2
             }
 
             deploymentNode "Region 1" {
-                deploymentNode "Exection Platform" {
-                    containerInstance commandService.controller region1
+                group "Command Service" {
+                    deploymentNode "Command Controller" {
+                        instances "1..N"
+                        containerInstance commandService.controller region1
+                    }
 
-                    containerInstance fastService.changesController region1,global
-                    containerInstance fastService.evictionController region1
-                    containerInstance fastService.queryController region1
-
-                    containerInstance archiveService.changesController region1,global
-                    containerInstance archiveService.changesController region1
-                    containerInstance archiveService.queryController region1
+                    deploymentNode "Command Broker" {
+                        instances "3"
+                        containerInstance commandService.broker region1,global
+                    }
                 }
 
-                deploymentNode "Message Platform" {
-                    containerInstance commandService.broker region1,global
-                }
-                
-                deploymentNode "RDBMS Platform" {
-                    containerInstance archiveService.dataRepository region1
+                group "Fast Query Service" {
+                    deploymentNode "Fast Query Controller" {
+                        instances "1..N"
+                        containerInstance fastService.queryController region1
+                    }
+
+                    deploymentNode "Fast Changes Controller" {
+                        instances "1..2"
+                        containerInstance fastService.changesController region1,global
+                    }
+
+                    deploymentNode "Fast Eviction Controller" {
+                        instances "1"
+                        containerInstance fastService.evictionController region1
+                    }
+
+                    deploymentNode "Fast Data Repository" {
+                        instances "1..N"
+                        containerInstance fastService.dataRepository region1
+                    }
                 }
 
-                deploymentNode "K/V Platform" {
-                    containerInstance fastService.dataRepository region1
+                group "Archive Query Service" {
+                    deploymentNode "Archive Query Controller" {
+                        instances "1..N"
+                        containerInstance archiveService.queryController region1
+                    }
+
+                    deploymentNode "Archive Changes Controller" {
+                        instances "1..2"
+                        containerInstance archiveService.changesController region1,global
+                    }
+
+                    deploymentNode "Archive Eviction Controller" {
+                        instances "1"
+                        containerInstance archiveService.evictionController region1
+                    }
+
+                    deploymentNode "Archive Data Repository" {
+                        instances "3"
+                        containerInstance archiveService.dataRepository region1
+                    }
                 }
             }
 
             deploymentNode "Region 2" {
-                deploymentNode "Exection Platform" {
-                    containerInstance commandService.controller region2
+                group "Command Service" {
+                    deploymentNode "Command Controller" {
+                        instances "1..N"
+                        containerInstance commandService.controller region2
+                    }
 
-                    containerInstance fastService.changesController region2,global
-                    containerInstance fastService.evictionController region2
-                    containerInstance fastService.queryController region2
-
-                    containerInstance archiveService.changesController region2,global
-                    containerInstance archiveService.changesController region2
-                    containerInstance archiveService.queryController region2
+                    deploymentNode "Command Broker" {
+                        instances "3"
+                        containerInstance commandService.broker region2,global
+                    }
                 }
 
-                deploymentNode "Message Platform" {
-                    containerInstance commandService.broker region2,global
-                }
-                
-                deploymentNode "RDBMS Platform" {
-                    containerInstance archiveService.dataRepository region2
+                group "Fast Query Service" {
+                    deploymentNode "Fast Query Controller" {
+                        instances "1..N"
+                        containerInstance fastService.queryController region2
+                    }
+
+                    deploymentNode "Fast Changes Controller" {
+                        instances "1..2"
+                        containerInstance fastService.changesController region2,global
+                    }
+
+                    deploymentNode "Fast Eviction Controller" {
+                        instances "1"
+                        containerInstance fastService.evictionController region2
+                    }
+
+                    deploymentNode "Fast Data Repository" {
+                        instances "1..N"
+                        containerInstance fastService.dataRepository region2
+                    }
                 }
 
-                deploymentNode "K/V Platform" {
-                    containerInstance fastService.dataRepository region2
+                group "Archive Query Service" {
+                    deploymentNode "Archive Query Controller" {
+                        instances "1..N"
+                        containerInstance archiveService.queryController region2
+                    }
+
+                    deploymentNode "Archive Changes Controller" {
+                        instances "1..2"
+                        containerInstance archiveService.changesController region2,global
+                    }
+
+                    deploymentNode "Archive Eviction Controller" {
+                        instances "1"
+                        containerInstance archiveService.evictionController region2
+                    }
+
+                    deploymentNode "Archive Data Repository" {
+                        instances "3"
+                        containerInstance archiveService.dataRepository region2
+                    }
                 }
             }
         }
