@@ -241,15 +241,16 @@ workspace {
             }
         }
 
-        systemLandscape "systemLandscape" {
+        systemLandscape "000-systemlandscape" {
             title "Big Picture"
             description "Highest-level view"
 
             autoLayout tb
             include *
+            default
         }
 
-        container commandService "Authoring" {
+        container commandService "010-command" {
             title "Authoring"
             description "How clients can create/delete and modify resources"
 
@@ -258,7 +259,7 @@ workspace {
             include element.tag==Repository->
         }
 
-        container fastService "FastQueries" {
+        container fastService "011-query" {
             title "Retriving Active Entities"
             description "How clients get informations on active resources using a fast interface"
 
@@ -266,7 +267,7 @@ workspace {
             include ->element.parent==fastService->
         }
 
-        container archiveService "ArchivedQueries" {
+        container archiveService "012-query" {
             title "Retriving Full Entities"
             description "How clients get informations on full resources using"
 
@@ -274,7 +275,7 @@ workspace {
             include ->element.parent==archiveService->
         }
 
-        deployment * "Single Region" "deploy-001" {
+        deployment * "Single Region" "201-deploy" {
             title "Single Region"
             description "How deploy on a single region. Deployment for no-production or low budget environments."
 
@@ -282,7 +283,7 @@ workspace {
             include *
         }
 
-        deployment * "Multiple Regions" "deploy-002" {
+        deployment * "Multiple Regions" "202-deploy" {
             title "Multiple Regions"
             description "How deploy on two or more regions. Deployment for production with high performance and resilience requirements."
             
