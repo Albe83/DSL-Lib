@@ -116,37 +116,138 @@ workspace {
             }
         }
 
-
-        deploymentEnvironment "Single Region" {
+        deploymentEnvironment "NoProd Single Region" {
             deploymentNode "Clients" {
+                instances "1"
+
                 containerInstance client.commandAdapter
                 containerInstance client.fastAdapter
                 containerInstance client.archiveAdapter
             }
 
             deploymentNode "Region" {
-                deploymentNode "Exection Platform" {
-                    containerInstance commandService.controller
+                group "Command Service" {
+                    deploymentNode "Command Controller" {
+                        instances "1"
+                        containerInstance commandService.controller
+                    }
 
-                    containerInstance fastService.changesController
-                    containerInstance fastService.evictionController
-                    containerInstance fastService.queryController
-
-                    containerInstance archiveService.changesController
-                    containerInstance archiveService.changesController
-                    containerInstance archiveService.queryController 
+                    deploymentNode "Command Broker" {
+                        instances "1"
+                        containerInstance commandService.broker
+                    }
                 }
 
-                deploymentNode "Message Platform" {
-                    containerInstance commandService.broker
-                }
-                
-                deploymentNode "RDBMS Platform" {
-                    containerInstance archiveService.dataRepository
+                group "Fast Query Service" {
+                    deploymentNode "Fast Query Controller" {
+                        instances "1"
+                        containerInstance fastService.queryController
+                    }
+
+                    deploymentNode "Fast Changes Controller" {
+                        instances "1"
+                        containerInstance fastService.changesController
+                    }
+
+                    deploymentNode "Fast Eviction Controller" {
+                        instances "1"
+                        containerInstance fastService.evictionController
+                    }
+
+                    deploymentNode "Fast Data Repository" {
+                        instances "1"
+                        containerInstance fastService.dataRepository
+                    }
                 }
 
-                deploymentNode "K/V Platform" {
-                    containerInstance fastService.dataRepository
+                group "Archive Query Service" {
+                    deploymentNode "Archive Query Controller" {
+                        instances "1"
+                        containerInstance archiveService.queryController
+                    }
+
+                    deploymentNode "Archive Changes Controller" {
+                        instances "1"
+                        containerInstance archiveService.changesController 
+                    }
+
+                    deploymentNode "Archive Eviction Controller" {
+                        instances "1"
+                        containerInstance archiveService.evictionController
+                    }
+
+                    deploymentNode "Archive Data Repository" {
+                        instances "1"
+                        containerInstance archiveService.dataRepository
+                    }
+                }
+            }
+        }
+
+        deploymentEnvironment "Production Single Region" {
+            deploymentNode "Clients" {
+                instances "1..N"
+
+                containerInstance client.commandAdapter
+                containerInstance client.fastAdapter
+                containerInstance client.archiveAdapter
+            }
+
+            deploymentNode "Region" {
+                group "Command Service" {
+                    deploymentNode "Command Controller" {
+                        instances "1..N"
+                        containerInstance commandService.controller
+                    }
+
+                    deploymentNode "Command Broker" {
+                        instances "3"
+                        containerInstance commandService.broker
+                    }
+                }
+
+                group "Fast Query Service" {
+                    deploymentNode "Fast Query Controller" {
+                        instances "1..N"
+                        containerInstance fastService.queryController
+                    }
+
+                    deploymentNode "Fast Changes Controller" {
+                        instances "1..2"
+                        containerInstance fastService.changesController
+                    }
+
+                    deploymentNode "Fast Eviction Controller" {
+                        instances "1"
+                        containerInstance fastService.evictionController
+                    }
+
+                    deploymentNode "Fast Data Repository" {
+                        instances "1..N"
+                        containerInstance fastService.dataRepository
+                    }
+                }
+
+                group "Archive Query Service" {
+                    deploymentNode "Archive Query Controller" {
+                        instances "1..N"
+                        containerInstance archiveService.queryController
+                    }
+
+                    deploymentNode "Archive Changes Controller" {
+                        instances "1..2"
+                        containerInstance archiveService.changesController 
+                    }
+
+                    deploymentNode "Archive Eviction Controller" {
+                        instances "1"
+                        containerInstance archiveService.evictionController
+                    }
+
+                    deploymentNode "Archive Data Repository" {
+                        instances "3"
+                        containerInstance archiveService.dataRepository
+                    }
                 }
             }
         }
@@ -242,7 +343,7 @@ workspace {
         }
 
         systemLandscape "000-systemlandscape" {
-            title "Big Picture"
+            title "Structure: Big Picture"
             description "Highest-level view"
 
             autoLayout tb
@@ -251,7 +352,7 @@ workspace {
         }
 
         container commandService "010-command" {
-            title "Authoring"
+            title "Structure: Authoring"
             description "How clients can create/delete and modify resources"
 
             autoLayout tb
@@ -260,7 +361,7 @@ workspace {
         }
 
         container fastService "011-query" {
-            title "Retriving Active Entities"
+            title "Structure: Retriving Active Entities"
             description "How clients get informations on active resources using a fast interface"
 
             autoLayout tb
@@ -268,23 +369,31 @@ workspace {
         }
 
         container archiveService "012-query" {
-            title "Retriving Full Entities"
+            title "Structure: Retriving Full Entities"
             description "How clients get informations on full resources using"
 
             autoLayout tb
             include ->element.parent==archiveService->
         }
 
-        deployment * "Single Region" "201-deploy" {
-            title "Single Region"
-            description "How deploy on a single region. Deployment for no-production or low budget environments."
+        deployment * "NoProd Single Region" "201-deploy" {
+            title "Deployment: No Production Single Region"
+            description "Deployment in a no production environment on single region."
 
             autoLayout tb
             include *
         }
 
-        deployment * "Multiple Regions" "202-deploy" {
-            title "Multiple Regions"
+        deployment * "Production Single Region" "211-deploy" {
+            title "Deployment: Production Single Region"
+            description "Deployment in a production-ready environment on single region, when resilience and performance isn't a strong requirements."
+
+            autoLayout tb
+            include *
+        }
+
+        deployment * "Multiple Regions" "212-deploy" {
+            title "Deployment: Multiple Regions"
             description "How deploy on two or more regions. Deployment for production with high performance and resilience requirements."
             
             autoLayout tb
