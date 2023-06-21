@@ -1,5 +1,6 @@
 workspace {
     name "CQRS"
+    description "Describe Command and Queries Separetion Responsability Pattern"
 
     !identifiers hierarchical
     !impliedRelationships false
@@ -12,76 +13,118 @@ workspace {
         group "CQRS System" {
             group "Server Subsystem" {
                 group "Command Subsystem" {
-                    commandService = softwareSystem "Authoring Service" {
-                        tags "Service"
-                        tags "CQRSCommand"
+                    commandService = softwareSystem "Resource Authoring Service" {
+                        tags "Service" "Authoring"
+                        tags "CQRS: Command" "CQRS" "Command"
+                        
+                        description "\
+                            It is responsible to generate new resources, assigning a unique identifier.\
+                            Also it is responsible to modify and remove already existing resources.\
+                        "
 
                         broker = container "Message Broker" {
-                            tags "Broker"
+                            tags "Service" "Authoring"
+                            tags "CQRS: Command" "CQRS" "Command"
+                            tags "EDA: Broker" "EDA" "Broker"
                         }
 
                         controller = container "Command Controller" {
+                            tags "Service" "Authoring"
+                            tags "CQRS: Command" "CQRS" "Command"
+                            tags "EDA: Producer" "EDA" "Producer"
                             tags "Controller"
 
-                            -> broker
+                            -> broker "Publish" "CloudEvents"
                         }
                     }
                 }
                 
                 group "Query Subsystem" {
-                    fastService = softwareSystem "Active Entities Service" {
-                        tags "Service"
-                        tags "CQRSQuery"
+                    fastService = softwareSystem "Fast Resource Reading Service" {
+                        tags "Service" "Fast"
+                        tags "CQRS: Query" "CQRS" "Query"
+
+                        description "\
+                            Provides a fast access to resources data.\
+                            It is responsible for only a subset of resources.\
+                        "
+
+                        -> commandService "Watching resources events"
 
                         dataRepository = container "Data Repository" {
+                            tags "Service" "Fast"
+                            tags "CQRS: Query" "CQRS" "Query"
                             tags "Repository"
                         }
 
                         changesController = container "Changes Controller" {
+                            tags "Service" "Fast"
+                            tags "CQRS: Query" "CQRS" "Query"
+                            tags "EDA: Consumer" "EDA" "Consumer"
                             tags "Controller"
 
-                            -> dataRepository
-                            -> commandService.broker
+                            -> dataRepository "Write"
+                            -> commandService.broker "Consume" "CloudEvents"
                         }
 
                         evictionController = container "Eviction Controller" {
+                            tags "Service" "Fast"
+                            tags "CQRS: Query" "CQRS" "Query"
                             tags "Controller"
 
-                            -> dataRepository
+                            -> dataRepository "Delete"
                         }
 
                         queryController = container "Query Controller" {
+                            tags "Service" "Fast"
+                            tags "CQRS: Query" "CQRS" "Query"
                             tags "Controller"
 
-                            -> dataRepository
+                            -> dataRepository "Read"
                         }
                     }
 
-                    archiveService = softwareSystem "Archived Entities Service" {
-                        tags "Service"
-                        tags "CQRSQuery"
+                    archiveService = softwareSystem "Full Resource Reading Service" {
+                        tags "Service" "Full"
+                        tags "CQRS: Query" "CQRS" "Query"
+
+                        description "\
+                            Provides access to resources data.\
+                            It is responsible for the full set of resources.\
+                        "
+
+                        -> commandService "Watching resources events"
 
                         dataRepository = container "Data Repository" {
+                            tags "Service" "Full"
+                            tags "CQRS: Query" "CQRS" "Query"
                             tags "Repository"
                         }
 
                         changesController = container "Changes Controller" {
+                            tags "Service" "Full"
+                            tags "CQRS: Query" "CQRS" "Query"
+                            tags "EDA: Consumer" "EDA" "Consumer"
                             tags "Controller"
 
-                            -> dataRepository
-                            -> commandService.broker
+                            -> dataRepository "Write"
+                            -> commandService.broker "Consume" "CloudEvents"
                         }
 
                         evictionController = container "Eviction Controller" {
+                            tags "Service" "Full"
+                            tags "CQRS: Query" "CQRS" "Query"
                             tags "Controller"
 
-                            -> dataRepository
+                            -> dataRepository "Delete"
                         }
 
                         queryController = container "Query Controller" {
+                            tags "Service" "Full"
+                            tags "CQRS: Query" "CQRS" "Query"
                             tags "Controller"
 
-                            -> dataRepository
+                            -> dataRepository "Read"
                         }
                     }
                 }
@@ -91,9 +134,12 @@ workspace {
                 client = softwareSystem "Client" {
                     tags "Client"
 
-                    -> commandService
-                    -> fastService
-                    -> archiveService
+                    description "\
+                        A generic client using system to perform CRUD operations on resources.\
+                    "
+                    -> commandService "Performing create, edit and delete operations on resources."
+                    -> fastService "Reading resources data from a selected subset."
+                    -> archiveService "Reading resources data from the full set."
 
                     commandAdapter = container "Authoring Adapter" {
                         tags "Adapter"
@@ -387,19 +433,11 @@ workspace {
         styles {
             themes default
 
-            element "Container" {
+            element "Controller" {
                 shape "Hexagon"
             }
 
-            element "Client" {
-                shape "WebBrowser"
-            }
-
-            element "Service" {
-                shape "Hexagon"
-            }
-            
-            element "Broker" {
+            element "EDA: Broker" {
                 shape "Pipe"
             }
 
