@@ -63,8 +63,8 @@ workspace {
                             tags "EDA: Consumer" "EDA" "Consumer"
                             tags "Controller"
 
-                            -> dataRepository "Write"
                             -> commandService.broker "Consume" "CloudEvents"
+                            -> dataRepository "Write resource representation"
                         }
 
                         evictionController = container "Eviction Controller" {
@@ -72,7 +72,7 @@ workspace {
                             tags "CQRS: Query" "CQRS" "Query"
                             tags "Controller"
 
-                            -> dataRepository "Delete"
+                            -> dataRepository "Remove resources become useless in specific use case"
                         }
 
                         queryController = container "Query Controller" {
@@ -80,7 +80,7 @@ workspace {
                             tags "CQRS: Query" "CQRS" "Query"
                             tags "Controller"
 
-                            -> dataRepository "Read"
+                            -> dataRepository "Retrieve stored resources"
                         }
                     }
 
@@ -107,7 +107,7 @@ workspace {
                             tags "EDA: Consumer" "EDA" "Consumer"
                             tags "Controller"
 
-                            -> dataRepository "Write"
+                            -> dataRepository "Write resource representation"
                             -> commandService.broker "Consume" "CloudEvents"
                         }
 
@@ -116,7 +116,7 @@ workspace {
                             tags "CQRS: Query" "CQRS" "Query"
                             tags "Controller"
 
-                            -> dataRepository "Delete"
+                            -> dataRepository "Remove resources become useless in specific use case"
                         }
 
                         queryController = container "Query Controller" {
@@ -124,7 +124,7 @@ workspace {
                             tags "CQRS: Query" "CQRS" "Query"
                             tags "Controller"
 
-                            -> dataRepository "Read"
+                            -> dataRepository "Retrieve stored resources"
                         }
                     }
                 }
@@ -137,14 +137,15 @@ workspace {
                     description "\
                         A generic client using system to perform CRUD operations on resources.\
                     "
+                    
                     -> commandService "Performing create, edit and delete operations on resources."
-                    -> fastService "Reading resources data from a selected subset."
+                    -> fastService "Reading resources data from a pre-selected subset."
                     -> archiveService "Reading resources data from the full set."
 
                     commandAdapter = container "Authoring Adapter" {
                         tags "Adapter"
 
-                        -> commandService.controller
+                        -> commandService.controller "Requesting for Create, Update or Delete resource"
                     }
 
                     fastAdapter = container "Active Entities Adapter" {
